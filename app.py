@@ -29,16 +29,19 @@ def process_pdfs():
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     chunks = splitter.split_documents(documents)
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    db = Chroma.from_documents(chunks, embedding=embeddings, persist_directory=None)
-    db.persist()
+    # In-memory Chroma vectorstore (no persist_directory)
+    db = Chroma.from_documents(chunks, embedding=embeddings)
     return db, f"Processed {len(documents)} pages, {len(chunks)} chunks."
+
 
 # Helper: Load vectorstore
 
 def load_vectorstore():
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    db = Chroma( embedding_function=embeddings)
+    # In-memory vectorstore (no persist_directory)
+    db = Chroma(embedding_function=embeddings)
     return db
+
 
 # Global: Try to load or build vectorstore
 try:
